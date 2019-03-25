@@ -7,3 +7,11 @@ edition = "2018"
 [dependencies]
 rocket = "0.4.0"
 
+[[example]]
+name = "hello"
+path = "examples/hello.rs"
+
+[[example]]
+name = "dynamic-path"
+path = "examples/dynamic-path.rs"
+

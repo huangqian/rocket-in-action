@@ -69,7 +69,7 @@ fn not_found() -> JsonValue {
     })
 }
 
-fn server() -> Rocket {
+fn rocket() -> Rocket {
     rocket::ignite()
         .mount("/person", routes![create, update, get])
         .register(catchers![not_found])
@@ -77,6 +77,41 @@ fn server() -> Rocket {
 }
 
 fn main() {
-    server().launch();
+    rocket().launch();
+}
+
+#[cfg(test)]
+mod test {
+    use rocket::http::ContentType;
+    use rocket::http::Status;
+    use rocket::local::Client;
+
+    use super::rocket;
+
+    #[test]
+    pub fn test_post() {
+        let client = Client::new(rocket()).unwrap();
+
+        let mut response = client
+            .post("/person/1")
+            .header(ContentType::JSON)
+            .body(r#"{"id": 1, "name": "jerry" }"#)
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        println!("{}", response.body_string().unwrap());
+    }
+
+    #[test]
+    pub fn test_put(){
+
+        let client = Client::new(rocket()).unwrap();
+        let mut res = client
+            .put("/person/1")
+            .header(ContentType::JSON)
+            .body(r#"{"id": 1, "name": "kafka"}"#)
+            .dispatch();
+        assert_eq!(res.status(), Status::Ok);
+        println!("{}", res.body_string().unwrap());
+    }
 }
 
